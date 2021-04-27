@@ -16,25 +16,26 @@ import com.virtualpairprogrammers.tracker.domain.VehiclePosition;
 
 @Component
 public class MessageProcessor {
-	
+
 	@Autowired
 	private Data data;
-	
+
 	@Value("${fleetman.position.queue}")
 	private String queueName;
-	
+
 	@JmsListener(destination="${fleetman.position.queue}")
-	public void processPositionMessageFromQueue(Map<String, String> incomingMessage ) throws ParseException 
+	public void processPositionMessageFromQueue(Map<String, String> incomingMessage ) throws ParseException
 	{
 		Date convertedDatestamp = new java.util.Date();
-		
+
 		VehiclePosition newReport = new VehicleBuilder()
 				                          .withName(incomingMessage.get("vehicle"))
 				                          .withLat(new BigDecimal(incomingMessage.get("lat")))
 				                          .withLng(new BigDecimal(incomingMessage.get("long")))
 				                          .withTimestamp(convertedDatestamp)
+																	.withSpeed(47.5)
 				                          .build();
-				                          
+
 		data.updatePosition(newReport);
 	}
 
